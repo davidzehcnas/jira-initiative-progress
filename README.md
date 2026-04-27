@@ -44,7 +44,7 @@ Expected output on success:
 
 ```
 Connection successful.
-  User:  David Sanchez
+  User:  Your Name
   Email: your.name@company.com
   Site:  your-org.atlassian.net
 ```
@@ -61,73 +61,11 @@ export JIRA_API_TOKEN="your-token-here"
 python3 initiative_progress.py PROJ-123
 ```
 
-`JIRA_SITE` defaults to `your-org.atlassian.net`. Override it only if needed:
+Override `JIRA_SITE`, too:
 
 ```bash
 export JIRA_SITE="other-org.atlassian.net"
-```
-
-### Storing credentials securely (never commit them)
-
-The token must **never** appear in any file tracked by git. The options below go from simplest to most secure:
-
-**Option A — Shell profile (simplest)**
-
-Add the exports to `~/.zshrc` (or `~/.zprofile` for login shells):
-
-```bash
-# ~/.zshrc  — keep this file out of any git repo
-export JIRA_EMAIL="your.name@company.com"
-export JIRA_API_TOKEN="your-token-here"
-```
-
-Reload with `source ~/.zshrc`. The token lives only on your machine in a file that is never inside a git working tree.
-
-**Option B — `direnv` + `.env` file (recommended for per-project isolation)**
-
-1. Install `direnv` (`brew install direnv`) and hook it into your shell.
-2. Create a `.env` file **inside the project directory**:
-
-   ```bash
-   # .env  — never committed
-   export JIRA_EMAIL="your.name@company.com"
-   export JIRA_API_TOKEN="your-token-here"
-   ```
-
-3. Allow the directory: `direnv allow .`
-4. Make absolutely sure `.env` is gitignored:
-
-   ```bash
-   echo '.env' >> .gitignore
-   ```
-
-`direnv` loads the variables automatically when you `cd` into the directory and unloads them when you leave.
-
-**Option C — macOS Keychain (most secure)**
-
-Store the token in the system keychain so it is encrypted at rest and never written to any plain-text file:
-
-```bash
-# Store once
-security add-generic-password -a "$USER" -s jira-api-token -w "your-token-here"
-
-# Retrieve in your shell profile or a wrapper script
-export JIRA_API_TOKEN="$(security find-generic-password -a "$USER" -s jira-api-token -w)"
-```
-
-The `security` command is built into macOS — no extra tools needed.
-
-### .gitignore checklist
-
-If this project ever gets a git remote, make sure the following are always gitignored:
-
-```
-.env
-*.env
-.envrc
-```
-
-Never rely on git to keep a secret safe after it has been committed even once — it will remain in the history. If a token is accidentally committed, **rotate it immediately** on `https://id.atlassian.com/manage-profile/security/api-tokens`.
+``
 
 ## Output
 
