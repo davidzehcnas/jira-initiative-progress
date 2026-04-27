@@ -64,7 +64,7 @@ def _build_data_row(summary: str, counts: Dict[str, int], blocks: int) -> List[s
     total = sum(counts.values())
     done = counts[STATUS_DONE]
     bar = build_progress_bar(done, total, blocks)
-    progress = f"{bar} {percent(done, total):.1f}% ({total})".strip()
+    progress = bar
     return [
         escape_markdown(summary),
         progress,
