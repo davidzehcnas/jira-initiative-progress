@@ -69,9 +69,8 @@ export JIRA_SITE="other-org.atlassian.net"
 
 ## Output
 
-The script prints markdown like this:
+The script prints markdown that renders like this:
 
-```md
 | Epic                      | Progress                         | ⬜ Not started | 🟧 In progress | 🟪 In review |     🟩 Done |
 | ------------------------- | -------------------------------- | -------------: | -------------: | -----------: | ----------: |
 | User onboarding redesign  | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 100.0% (14) |       0.0% (0) |       0.0% (0) |     0.0% (0) | 100.0% (14) |
@@ -80,7 +79,6 @@ The script prints markdown like this:
 | Data export pipeline      | ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ 0.0% (0)    |      62.5% (5) |      37.5% (3) |     0.0% (0) |    0.0% (0) |
 | Search indexing v2        | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 80.0% (8)   |       0.0% (0) |      10.0% (1) |    10.0% (1) |   80.0% (8) |
 | Total                     | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 59.6% (31)  |     19.2% (10) |      15.4% (8) |     5.8% (3) |  59.6% (31) |
-```
 
 ## Notes
 
