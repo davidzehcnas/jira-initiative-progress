@@ -5,7 +5,7 @@ import os
 from dataclasses import dataclass
 
 
-DEFAULT_SITE = "glovoapp.atlassian.net"
+DEFAULT_SITE = "your-org.atlassian.net"
 DEFAULT_BLOCKS = 10
 
 

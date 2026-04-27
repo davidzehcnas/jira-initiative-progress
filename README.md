@@ -7,7 +7,7 @@ Small Python utility that pulls an initiative from Jira and prints the same mark
 Set your credentials and pass the initiative key:
 
 ```bash
-export JIRA_EMAIL="your.name@glovoapp.com"
+export JIRA_EMAIL="your.name@company.com"
 export JIRA_API_TOKEN="your-token-here"
 python3 initiative_progress.py PROJ-123
 ```
@@ -35,7 +35,7 @@ Click **Create API token**, give it a label (e.g. `jira-utils`), and copy the va
 Before running a real query you can confirm that the credentials and site are correct with `--check`:
 
 ```bash
-export JIRA_EMAIL="your.name@glovoapp.com"
+export JIRA_EMAIL="your.name@company.com"
 export JIRA_API_TOKEN="your-token-here"
 python3 initiative_progress.py --check
 ```
@@ -45,8 +45,8 @@ Expected output on success:
 ```
 Connection successful.
   User:  David Sanchez
-  Email: your.name@glovoapp.com
-  Site:  glovoapp.atlassian.net
+  Email: your.name@company.com
+  Site:  your-org.atlassian.net
 ```
 
 If the token is wrong or revoked the script exits with a non-zero code and prints the HTTP error returned by Jira (usually `401 Unauthorized`).
@@ -56,12 +56,12 @@ If the token is wrong or revoked the script exits with a non-zero code and print
 Pass the credentials via environment variables:
 
 ```bash
-export JIRA_EMAIL="your.name@glovoapp.com"
+export JIRA_EMAIL="your.name@company.com"
 export JIRA_API_TOKEN="your-token-here"
 python3 initiative_progress.py PROJ-123
 ```
 
-`JIRA_SITE` defaults to `glovoapp.atlassian.net`. Override it only if needed:
+`JIRA_SITE` defaults to `your-org.atlassian.net`. Override it only if needed:
 
 ```bash
 export JIRA_SITE="other-org.atlassian.net"
@@ -77,7 +77,7 @@ Add the exports to `~/.zshrc` (or `~/.zprofile` for login shells):
 
 ```bash
 # ~/.zshrc  — keep this file out of any git repo
-export JIRA_EMAIL="your.name@glovoapp.com"
+export JIRA_EMAIL="your.name@company.com"
 export JIRA_API_TOKEN="your-token-here"
 ```
 
@@ -90,7 +90,7 @@ Reload with `source ~/.zshrc`. The token lives only on your machine in a file th
 
    ```bash
    # .env  — never committed
-   export JIRA_EMAIL="your.name@glovoapp.com"
+   export JIRA_EMAIL="your.name@company.com"
    export JIRA_API_TOKEN="your-token-here"
    ```
 
@@ -136,7 +136,7 @@ The script prints markdown like this:
 ```md
 | Epic | Progress | ⬜ Not started | 🟧 In progress | 🟪 In review | 🟩 Done |
 |---|---|---:|---:|---:|---:|
-| Pagination in clients | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 100.0% (14) | 0.0% (0) | 0.0% (0) | 0.0% (0) | 100.0% (14) |
+| User onboarding redesign | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 100.0% (14) | 0.0% (0) | 0.0% (0) | 0.0% (0) | 100.0% (14) |
 ```
 
 ## Notes
@@ -162,7 +162,7 @@ No initiative key is needed. The script exits with code 0 on success and prints 
 
 ### `--site`
 
-The Jira Cloud hostname to connect to. Defaults to `glovoapp.atlassian.net`, which is correct for most uses. Only set this if you need to point the script at a different Atlassian organisation.
+The Jira Cloud hostname to connect to. Defaults to `your-org.atlassian.net`, which is correct for most uses. Only set this if you need to point the script at a different Atlassian organisation.
 
 ```bash
 python3 initiative_progress.py PROJ-123 --site other-org.atlassian.net
@@ -177,7 +177,7 @@ Can also be set via the `JIRA_SITE` environment variable.
 Your Atlassian account email address. This is the email you use to log in to Jira, even if you normally authenticate via Google SSO.
 
 ```bash
-python3 initiative_progress.py PROJ-123 --email your.name@glovoapp.com
+python3 initiative_progress.py PROJ-123 --email your.name@company.com
 ```
 
 Prefer setting this via the `JIRA_EMAIL` environment variable so it is not visible in your shell history.
