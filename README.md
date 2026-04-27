@@ -1,6 +1,6 @@
 # Jira Initiative Progress
 
-Small Python utility that pulls an initiative from Jira and prints the same markdown table format used above, including the green progress bar based on done tasks.
+A command-line tool that fetches a Jira initiative and generates a markdown progress table broken down by epic. Each epic shows a visual progress bar and task counts by status (not started, in progress, in review, done), making it easy to share a snapshot of your initiative with your team.
 
 ## Usage
 
