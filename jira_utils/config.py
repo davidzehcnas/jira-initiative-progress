@@ -7,9 +7,10 @@ from dataclasses import dataclass
 
 DEFAULT_SITE = "your-org.atlassian.net"
 DEFAULT_BLOCKS = 10
+DEFAULT_TIMEOUT = 30
 
 
-@dataclass
+@dataclass(frozen=True)
 class JiraConfig:
     email: str
     api_token: str
@@ -59,8 +60,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--timeout",
         type=int,
-        default=30,
-        help="HTTP timeout in seconds. Default: 30",
+        default=DEFAULT_TIMEOUT,
+        help=f"HTTP timeout in seconds. Default: {DEFAULT_TIMEOUT}",
     )
     parser.add_argument(
         "--no-total",

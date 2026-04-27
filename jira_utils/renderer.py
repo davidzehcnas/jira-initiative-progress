@@ -4,7 +4,26 @@ import math
 import unicodedata
 from typing import Dict, List
 
-from jira_utils.progress import EpicProgress
+from jira_utils.progress import (
+    EpicProgress,
+    STATUS_DONE,
+    STATUS_IN_PROGRESS,
+    STATUS_IN_REVIEW,
+    STATUS_NOT_STARTED,
+)
+
+# East-Asian width categories that occupy two terminal columns.
+_WIDE_CATEGORIES = frozenset({"W", "F"})
+
+# Column definitions: (header text, right-aligned).
+_COLUMNS = [
+    ("Epic",            False),
+    ("Progress",        False),
+    ("⬜ Not started",  True),
+    ("🟧 In progress",  True),
+    ("🟪 In review",    True),
+    ("🟩 Done",         True),
+]
 
 
 def percent(count: int, total: int) -> float:
@@ -30,64 +49,65 @@ def escape_markdown(text: str) -> str:
 
 
 def display_width(text: str) -> int:
-    """Return the number of terminal columns needed to display text.
+    """Return the number of terminal columns needed to display *text*.
 
     Emoji and other wide characters occupy two columns each.
     """
-    width = 0
-    for ch in text:
-        eaw = unicodedata.east_asian_width(ch)
-        width += 2 if eaw in ("W", "F") else 1
-    return width
+    return sum(
+        2 if unicodedata.east_asian_width(ch) in _WIDE_CATEGORIES else 1
+        for ch in text
+    )
+
+
+def _build_data_row(summary: str, counts: Dict[str, int], blocks: int) -> List[str]:
+    """Build one row of string cells from an epic's status counts."""
+    total = sum(counts.values())
+    done = counts[STATUS_DONE]
+    bar = build_progress_bar(done, total, blocks)
+    progress = f"{bar} {format_metric(done, total)}".strip()
+    return [
+        escape_markdown(summary),
+        progress,
+        format_metric(counts[STATUS_NOT_STARTED], total),
+        format_metric(counts[STATUS_IN_PROGRESS], total),
+        format_metric(counts[STATUS_IN_REVIEW], total),
+        format_metric(done, total),
+    ]
 
 
 def render_markdown_table(rows: List[EpicProgress], blocks: int, include_total: bool) -> str:
-    HEADERS = ["Epic", "Progress", "⬜ Not started", "🟧 In progress", "🟪 In review", "🟩 Done"]
-    RIGHT   = [False,  False,      True,             True,             True,           True]
-
-    def build_data_row(summary: str, done: int, total: int, counts: Dict[str, int]) -> List[str]:
-        progress = f"{build_progress_bar(done, total, blocks)} {format_metric(done, total)}".strip()
-        return [
-            escape_markdown(summary),
-            progress,
-            format_metric(counts["not_started"], total),
-            format_metric(counts["in_progress"], total),
-            format_metric(counts["in_review"], total),
-            format_metric(done, total),
-        ]
+    headers = [name for name, _ in _COLUMNS]
+    right   = [r    for _, r    in _COLUMNS]
 
     data_rows: List[List[str]] = [
-        build_data_row(row.summary, row.counts["done"], row.total, row.counts)
+        _build_data_row(row.summary, row.counts, blocks)
         for row in rows
     ]
 
     if include_total:
-        totals: Dict[str, int] = {"not_started": 0, "in_progress": 0, "in_review": 0, "done": 0}
+        totals: Dict[str, int] = {}
         for row in rows:
             for key, value in row.counts.items():
-                totals[key] += value
-        grand_total = sum(totals.values())
-        total_row = build_data_row("Total", totals["done"], grand_total, totals)
-        total_row = list(total_row)
-        data_rows.append(total_row)
+                totals[key] = totals.get(key, 0) + value
+        data_rows.append(_build_data_row("Total", totals, blocks))
 
     # Compute the display width of the widest value in each column.
-    col_widths = [display_width(h) for h in HEADERS]
+    col_widths = [display_width(h) for h in headers]
     for data_row in data_rows:
         for col, cell in enumerate(data_row):
             col_widths[col] = max(col_widths[col], display_width(cell))
 
     def pad(text: str, col: int) -> str:
         padding = " " * max(0, col_widths[col] - display_width(text))
-        return (padding + text) if RIGHT[col] else (text + padding)
+        return (padding + text) if right[col] else (text + padding)
 
     def sep(col: int) -> str:
         w = col_widths[col]
-        return ("-" * (w - 1) + ":") if RIGHT[col] else ("-" * w)
+        return ("-" * (w - 1) + ":") if right[col] else ("-" * w)
 
     lines = [
-        "| " + " | ".join(pad(h, i) for i, h in enumerate(HEADERS)) + " |",
-        "| " + " | ".join(sep(i) for i in range(len(HEADERS))) + " |",
+        "| " + " | ".join(pad(h, i) for i, h in enumerate(headers)) + " |",
+        "| " + " | ".join(sep(i) for i in range(len(headers))) + " |",
     ]
     for data_row in data_rows:
         lines.append("| " + " | ".join(pad(cell, i) for i, cell in enumerate(data_row)) + " |")

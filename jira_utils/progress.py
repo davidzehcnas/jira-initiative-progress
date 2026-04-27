@@ -1,10 +1,19 @@
 from __future__ import annotations
 
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from jira_utils.client import JiraClient
+
+# Canonical status buckets used for classification and counting.
+STATUS_NOT_STARTED = "not_started"
+STATUS_IN_PROGRESS = "in_progress"
+STATUS_IN_REVIEW = "in_review"
+STATUS_DONE = "done"
+
+STATUSES = (STATUS_NOT_STARTED, STATUS_IN_PROGRESS, STATUS_IN_REVIEW, STATUS_DONE)
 
 
 @dataclass
@@ -39,17 +48,18 @@ def fetch_epic_children(client: JiraClient, epic_key: str) -> List[dict]:
 
 
 def classify_issue(issue: dict) -> str:
+    """Map a Jira issue to one of the canonical status buckets."""
     status = issue["fields"]["status"]
     name = status["name"].strip().lower()
     category = status["statusCategory"]["key"]
 
     if category == "done":
-        return "done"
+        return STATUS_DONE
     if "review" in name:
-        return "in_review"
+        return STATUS_IN_REVIEW
     if category == "new":
-        return "not_started"
-    return "in_progress"
+        return STATUS_NOT_STARTED
+    return STATUS_IN_PROGRESS
 
 
 def build_progress(epics: List[dict], client: JiraClient) -> List[EpicProgress]:
@@ -59,14 +69,10 @@ def build_progress(epics: List[dict], client: JiraClient) -> List[EpicProgress]:
         key = epic["key"]
         summary = epic["fields"]["summary"]
         print(f"  [{i}/{n}] Fetching children for {key}: {summary}", file=sys.stderr)
-        counts = {
-            "not_started": 0,
-            "in_progress": 0,
-            "in_review": 0,
-            "done": 0,
-        }
-        children = fetch_epic_children(client, epic["key"])
-        for child in children:
-            counts[classify_issue(child)] += 1
+
+        children = fetch_epic_children(client, key)
+        classified = Counter(classify_issue(child) for child in children)
+        counts = {s: classified.get(s, 0) for s in STATUSES}
+
         rows.append(EpicProgress(summary=summary, counts=counts))
     return rows
