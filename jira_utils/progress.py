@@ -71,6 +71,7 @@ def build_progress(epics: List[dict], client: JiraClient) -> List[EpicProgress]:
         print(f"  [{i}/{n}] Fetching children for {key}: {summary}", file=sys.stderr)
 
         children = fetch_epic_children(client, key)
+        children = [c for c in children if c["key"] != key]
         classified = Counter(classify_issue(child) for child in children)
         counts = {s: classified.get(s, 0) for s in STATUSES}
 
