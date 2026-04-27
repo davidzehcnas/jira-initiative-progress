@@ -65,7 +65,7 @@ Override `JIRA_SITE`, too:
 
 ```bash
 export JIRA_SITE="other-org.atlassian.net"
-``
+```
 
 ## Output
 
