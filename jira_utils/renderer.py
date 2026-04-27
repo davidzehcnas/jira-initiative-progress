@@ -63,11 +63,9 @@ def _build_data_row(summary: str, counts: Dict[str, int], blocks: int) -> List[s
     """Build one row of string cells from an epic's status counts."""
     total = sum(counts.values())
     done = counts[STATUS_DONE]
-    bar = build_progress_bar(done, total, blocks)
-    progress = bar
     return [
         escape_markdown(summary),
-        progress,
+        build_progress_bar(done, total, blocks),
         format_metric(counts[STATUS_NOT_STARTED], total),
         format_metric(counts[STATUS_IN_PROGRESS], total),
         format_metric(counts[STATUS_IN_REVIEW], total),
