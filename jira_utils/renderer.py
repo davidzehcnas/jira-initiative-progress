@@ -63,8 +63,11 @@ def _build_data_row(summary: str, counts: Dict[str, int], blocks: int) -> List[s
     """Build one row of string cells from an epic's status counts."""
     total = sum(counts.values())
     done = counts[STATUS_DONE]
+    epic_label = escape_markdown(summary)
+    if total > 0 and done == total:
+        epic_label = "* " + epic_label
     return [
-        escape_markdown(summary),
+        epic_label,
         build_progress_bar(done, total, blocks),
         format_metric(counts[STATUS_NOT_STARTED], total),
         format_metric(counts[STATUS_IN_PROGRESS], total),

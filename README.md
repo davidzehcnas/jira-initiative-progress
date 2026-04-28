@@ -71,19 +71,20 @@ export JIRA_SITE="other-org.atlassian.net"
 
 The script prints markdown that renders like this:
 
-| Epic                      | Progress             | ⬜ Not started | 🟧 In progress | 🟪 In review |     🟩 Done |
-| ------------------------- | -------------------- | -------------: | -------------: | -----------: | ----------: |
-| User onboarding redesign  | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |       0.0% (0) |       0.0% (0) |     0.0% (0) | 100.0% (14) |
-| API rate limiting         | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ |      10.0% (1) |      20.0% (2) |    10.0% (1) |   60.0% (6) |
-| Mobile push notifications | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ |      40.0% (4) |      20.0% (2) |    10.0% (1) |   30.0% (3) |
-| Data export pipeline      | ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ |      62.5% (5) |      37.5% (3) |     0.0% (0) |    0.0% (0) |
-| Search indexing v2        | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ |       0.0% (0) |      10.0% (1) |    10.0% (1) |   80.0% (8) |
-| Total                     | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ |     19.2% (10) |      15.4% (8) |     5.8% (3) |  59.6% (31) |
+| Epic                        | Progress             | ⬜ Not started | 🟧 In progress | 🟪 In review |     🟩 Done |
+| --------------------------- | -------------------- | -------------: | -------------: | -----------: | ----------: |
+| * User onboarding redesign  | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |       0.0% (0) |       0.0% (0) |     0.0% (0) | 100.0% (14) |
+| API rate limiting           | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ |      10.0% (1) |      20.0% (2) |    10.0% (1) |   60.0% (6) |
+| Mobile push notifications   | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ |      40.0% (4) |      20.0% (2) |    10.0% (1) |   30.0% (3) |
+| Data export pipeline        | ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ |      62.5% (5) |      37.5% (3) |     0.0% (0) |    0.0% (0) |
+| Search indexing v2          | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ |       0.0% (0) |      10.0% (1) |    10.0% (1) |   80.0% (8) |
+| Total                       | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ |     19.2% (10) |      15.4% (8) |     5.8% (3) |  59.6% (31) |
 
 ## Notes
 
 - Epic order is preserved from the initiative order in Jira.
 - The progress bar only reflects the done percentage.
+- Epics that are 100% done are marked with a `*` prefix in the Epic column.
 - The final row aggregates all child tasks from all epics.
 - Child task lookup first tries `parentEpic`, then falls back to `Epic Link` for older Jira setups.
 
