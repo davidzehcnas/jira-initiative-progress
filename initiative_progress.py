@@ -36,12 +36,11 @@ def main() -> int:
 
     if args.ignore_epics:
         ignore = {k.upper() for k in args.ignore_epics}
-        before = len(epics)
         epics = [e for e in epics if e["key"].upper() not in ignore]
-        skipped = before - len(epics)
-        print(f"Ignored {skipped} epic(s) ({', '.join(sorted(ignore))})", file=sys.stderr)
+        print(f"Ignoring epics: {', '.join(sorted(ignore))}", file=sys.stderr)
 
     rows = build_progress(epics, client)
+    
     print("", file=sys.stderr)
     print(render_markdown_table(rows))
     return 0
