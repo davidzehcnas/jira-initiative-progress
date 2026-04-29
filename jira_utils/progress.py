@@ -7,7 +7,6 @@ from typing import Dict, List, Optional
 
 from jira_utils.client import JiraClient
 
-# Canonical status buckets used for classification and counting.
 STATUS_NOT_STARTED = "not_started"
 STATUS_IN_PROGRESS = "in_progress"
 STATUS_IN_REVIEW = "in_review"
@@ -48,7 +47,6 @@ def fetch_epic_children(client: JiraClient, epic_key: str) -> List[dict]:
 
 
 def classify_issue(issue: dict) -> str:
-    """Map a Jira issue to one of the canonical status buckets."""
     status = issue["fields"]["status"]
     name = status["name"].strip().lower()
     category = status["statusCategory"]["key"]

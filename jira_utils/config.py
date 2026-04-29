@@ -6,7 +6,6 @@ from dataclasses import dataclass
 
 
 DEFAULT_SITE = "your-org.atlassian.net"
-DEFAULT_BLOCKS = 10
 DEFAULT_TIMEOUT = 30
 
 
@@ -34,28 +33,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--check",
         action="store_true",
-        help="Verify that credentials and site are valid, then exit. No initiative key needed.",
+        help="Verify that credentials and site are valid, then exit.",
     )
     parser.add_argument(
         "--site",
         default=os.environ.get("JIRA_SITE", DEFAULT_SITE),
         help=f"Jira site hostname. Default: {DEFAULT_SITE}",
-    )
-    parser.add_argument(
-        "--email",
-        default=os.environ.get("JIRA_EMAIL"),
-        help="Atlassian account email. Can also be set via JIRA_EMAIL.",
-    )
-    parser.add_argument(
-        "--api-token",
-        default=os.environ.get("JIRA_API_TOKEN"),
-        help="Personal Atlassian API token. Can also be set via JIRA_API_TOKEN.",
-    )
-    parser.add_argument(
-        "--blocks",
-        type=int,
-        default=DEFAULT_BLOCKS,
-        help=f"Progress bar size. Default: {DEFAULT_BLOCKS}",
     )
     parser.add_argument(
         "--timeout",
@@ -64,23 +47,18 @@ def parse_args() -> argparse.Namespace:
         help=f"HTTP timeout in seconds. Default: {DEFAULT_TIMEOUT}",
     )
     parser.add_argument(
-        "--no-total",
-        action="store_true",
-        help="Skip the final aggregated row.",
-    )
-    parser.add_argument(
         "--ignore-epics",
         nargs="+",
         default=[],
         metavar="KEY",
-        help="Epic keys to exclude from the table and totals, e.g. PROJ-456 PROJ-789.",
+        help="Epic keys to exclude from the table and totals.",
     )
     return parser.parse_args()
 
 
 def resolve_config(args: argparse.Namespace) -> JiraConfig:
-    email = args.email
-    api_token = args.api_token
+    email = os.environ.get("JIRA_EMAIL")
+    api_token = os.environ.get("JIRA_API_TOKEN")
 
     if not email or not api_token:
         raise SystemExit(

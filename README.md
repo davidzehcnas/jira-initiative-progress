@@ -24,6 +24,15 @@ The initiative key is the Jira issue key of the top-level initiative (e.g. `PROJ
 
 This script authenticates exclusively with a **personal Atlassian API token**. Even if you log in to Jira with your Google work account, scripts cannot reuse that browser session — they need an API token.
 
+Credentials are provided **only** via environment variables:
+
+| Variable         | Description                          |
+| ---------------- | ------------------------------------ |
+| `JIRA_EMAIL`     | Your Atlassian account email address |
+| `JIRA_API_TOKEN` | Your personal Atlassian API token    |
+
+There are no command-line flags for these values — environment variables are the only mechanism, keeping secrets out of shell history and process listings.
+
 ### Create your token
 
 Go to: `https://id.atlassian.com/manage-profile/security/api-tokens`
@@ -50,22 +59,6 @@ Connection successful.
 ```
 
 If the token is wrong or revoked the script exits with a non-zero code and prints the HTTP error returned by Jira (usually `401 Unauthorized`).
-
-### Provide credentials at runtime
-
-Pass the credentials via environment variables:
-
-```bash
-export JIRA_EMAIL="your.name@company.com"
-export JIRA_API_TOKEN="your-token-here"
-python3 initiative_progress.py PROJ-123
-```
-
-Override `JIRA_SITE`, too:
-
-```bash
-export JIRA_SITE="other-org.atlassian.net"
-```
 
 ## Output
 
@@ -111,52 +104,6 @@ python3 initiative_progress.py PROJ-123 --site other-org.atlassian.net
 ```
 
 Can also be set via the `JIRA_SITE` environment variable.
-
----
-
-### `--email`
-
-Your Atlassian account email address. This is the email you use to log in to Jira, even if you normally authenticate via Google SSO.
-
-```bash
-python3 initiative_progress.py PROJ-123 --email your.name@company.com
-```
-
-Prefer setting this via the `JIRA_EMAIL` environment variable so it is not visible in your shell history.
-
----
-
-### `--api-token`
-
-Your personal Atlassian API token. Create one at `https://id.atlassian.com/manage-profile/security/api-tokens`.
-
-```bash
-python3 initiative_progress.py PROJ-123 --api-token your-token-here
-```
-
-Prefer setting this via the `JIRA_API_TOKEN` environment variable so it is not visible in your shell history.
-
----
-
-### `--blocks`
-
-Controls how wide the progress bar is, measured in emoji blocks. Each block represents an equal slice of the total. Defaults to `10`. Increase it for more granularity, decrease it for a more compact output.
-
-```bash
-python3 initiative_progress.py PROJ-123 --blocks 20
-```
-
-A value of `20` means each block represents 5% of progress. A value of `4` means each block represents 25%.
-
----
-
-### `--no-total`
-
-By default the table includes a final **Total** row that aggregates the counts of every epic. Pass this flag to omit that row, for example when pasting the table somewhere that already has its own summary.
-
-```bash
-python3 initiative_progress.py PROJ-123 --no-total
-```
 
 ---
 

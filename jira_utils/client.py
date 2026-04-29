@@ -20,7 +20,6 @@ class JiraClient:
         self._timeout = config.timeout
 
     def check_connection(self) -> dict:
-        """Call GET /myself and return the user profile dict."""
         return self._request_json("GET", "/myself", None)
 
     def search(self, jql: str, fields: Iterable[str]) -> List[dict]:

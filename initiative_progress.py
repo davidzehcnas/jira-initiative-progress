@@ -30,9 +30,6 @@ def main() -> int:
     if not args.initiative_key:
         raise SystemExit("initiative_key is required unless --check is used.")
 
-    if args.blocks <= 0:
-        raise SystemExit("--blocks must be greater than 0")
-
     print(f"Fetching epics for {args.initiative_key}...", file=sys.stderr)
     epics = fetch_epics(client, args.initiative_key)
     print(f"Found {len(epics)} epic(s). Fetching children...", file=sys.stderr)
@@ -46,7 +43,7 @@ def main() -> int:
 
     rows = build_progress(epics, client)
     print("", file=sys.stderr)
-    print(render_markdown_table(rows, blocks=args.blocks, include_total=not args.no_total))
+    print(render_markdown_table(rows))
     return 0
 
 
