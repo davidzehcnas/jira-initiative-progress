@@ -70,8 +70,7 @@ def _build_data_row(summary: str, counts: Dict[str, int]) -> List[str]:
 
 
 def render_markdown_table(rows: List[EpicProgress]) -> str:
-    headers = [name for name, _ in _COLUMNS]
-    right = [r for _, r in _COLUMNS]
+    headers, right = zip(*_COLUMNS)
 
     data_rows: List[List[str]] = [
         _build_data_row(row.summary, row.counts)
