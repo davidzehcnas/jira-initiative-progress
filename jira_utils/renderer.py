@@ -88,20 +88,29 @@ def render_markdown_table(rows: List[EpicProgress]) -> str:
         for col, cell in enumerate(data_row):
             col_widths[col] = max(col_widths[col], display_width(cell))
 
-    def pad(text: str, col: int) -> str:
+    def pad_center(text: str, col: int) -> str:
         total = col_widths[col]
         w = display_width(text)
         left = (total - w) // 2
         return " " * left + text + " " * (total - w - left)
 
+    def pad_left(text: str, col: int) -> str:
+        return text + " " * (col_widths[col] - display_width(text))
+
+    def pad_right(text: str, col: int) -> str:
+        return " " * (col_widths[col] - display_width(text)) + text
+
+    def pad_data(text: str, col: int) -> str:
+        return pad_left(text, col) if col == 0 else pad_right(text, col)
+
     def sep(col: int) -> str:
         return ":" + "-" * max(1, col_widths[col] - 2) + ":"
 
     lines = [
-        "| " + " | ".join(pad(h, i) for i, h in enumerate(headers)) + " |",
+        "| " + " | ".join(pad_center(h, i) for i, h in enumerate(headers)) + " |",
         "| " + " | ".join(sep(i) for i in range(len(headers))) + " |",
     ]
     for data_row in data_rows:
-        lines.append("| " + " | ".join(pad(cell, i) for i, cell in enumerate(data_row)) + " |")
+        lines.append("| " + " | ".join(pad_data(cell, i) for i, cell in enumerate(data_row)) + " |")
 
     return "\n".join(lines)
