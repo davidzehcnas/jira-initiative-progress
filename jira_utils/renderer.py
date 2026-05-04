@@ -17,12 +17,12 @@ _WIDE_CATEGORIES = frozenset({"W", "F"})
 _BLOCKS = 10
 
 _COLUMNS = [
-    ("Epic",            False),
-    ("Progress",        False),
-    ("⬜ Not started",  True),
-    ("🟧 In progress",  True),
-    ("🟪 In review",    True),
-    ("🟩 Done",         True),
+    "Epic",
+    "Progress",
+    "⬜ Not started",
+    "🟧 In progress",
+    "🟪 In review",
+    "🟩 Done",
 ]
 
 
@@ -70,7 +70,7 @@ def _build_data_row(summary: str, counts: Dict[str, int]) -> List[str]:
 
 
 def render_markdown_table(rows: List[EpicProgress]) -> str:
-    headers, right = zip(*_COLUMNS)
+    headers = _COLUMNS
 
     data_rows: List[List[str]] = [
         _build_data_row(row.summary, row.counts)
@@ -89,12 +89,13 @@ def render_markdown_table(rows: List[EpicProgress]) -> str:
             col_widths[col] = max(col_widths[col], display_width(cell))
 
     def pad(text: str, col: int) -> str:
-        padding = " " * max(0, col_widths[col] - display_width(text))
-        return (padding + text) if right[col] else (text + padding)
+        total = col_widths[col]
+        w = display_width(text)
+        left = (total - w) // 2
+        return " " * left + text + " " * (total - w - left)
 
     def sep(col: int) -> str:
-        w = col_widths[col]
-        return ("-" * (w - 1) + ":") if right[col] else ("-" * w)
+        return ":" + "-" * max(1, col_widths[col] - 2) + ":"
 
     lines = [
         "| " + " | ".join(pad(h, i) for i, h in enumerate(headers)) + " |",
