@@ -51,7 +51,7 @@ def classify_issue(issue: dict) -> str:
 
     if category == "done":
         return STATUS_DONE
-    if "review" in name:
+    if "review" in name or "ready for release" in name:
         return STATUS_IN_REVIEW
     if category == "new":
         return STATUS_NOT_STARTED
