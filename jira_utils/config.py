@@ -1,11 +1,8 @@
-from __future__ import annotations
-
 import argparse
 import os
 from dataclasses import dataclass
 
 
-DEFAULT_SITE = "your-org.atlassian.net"
 DEFAULT_TIMEOUT = 30
 
 
@@ -21,42 +18,7 @@ class JiraConfig:
         return f"https://{self.site}/rest/api/3"
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Build the initiative progress markdown table from Jira.",
-    )
-    parser.add_argument(
-        "initiative_key",
-        nargs="?",
-        help="Initiative issue key, for example PROJ-123. Not required when using --check.",
-    )
-    parser.add_argument(
-        "--check",
-        action="store_true",
-        help="Verify that credentials and site are valid, then exit.",
-    )
-    parser.add_argument(
-        "--site",
-        default=os.environ.get("JIRA_SITE", DEFAULT_SITE),
-        help=f"Jira site hostname. Default: {DEFAULT_SITE}",
-    )
-    parser.add_argument(
-        "--timeout",
-        type=int,
-        default=DEFAULT_TIMEOUT,
-        help=f"HTTP timeout in seconds. Default: {DEFAULT_TIMEOUT}",
-    )
-    parser.add_argument(
-        "--ignore-epics",
-        nargs="+",
-        default=[],
-        metavar="KEY",
-        help="Epic keys to exclude from the table and totals.",
-    )
-    return parser.parse_args()
-
-
-def resolve_config(args: argparse.Namespace) -> JiraConfig:
+def build_config(args: argparse.Namespace) -> JiraConfig:
     email = os.environ.get("JIRA_EMAIL")
     api_token = os.environ.get("JIRA_API_TOKEN")
 

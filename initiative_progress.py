@@ -1,19 +1,55 @@
 #!/usr/bin/env python3
 
-from __future__ import annotations
-
+import argparse
 import sys
 
 from jira_utils.client import JiraClient
-from jira_utils.config import parse_args, resolve_config
+from jira_utils.config import build_config
 from jira_utils.progress import build_progress, fetch_epics
 from jira_utils.renderer import render_markdown_table
 
+DEFAULT_TIMEOUT = 30
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Build the initiative progress markdown table from Jira.",
+    )
+    parser.add_argument(
+        "site",
+        help="Jira site hostname.",
+    )
+    parser.add_argument(
+        "initiative_key",
+        nargs="?",
+        help="Initiative issue key, for example PROJ-123. Not required when using --check.",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Verify that credentials and site are valid, then exit.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=DEFAULT_TIMEOUT,
+        help=f"HTTP timeout in seconds. Default: {DEFAULT_TIMEOUT}",
+    )
+    parser.add_argument(
+        "--ignore-epics",
+        nargs="+",
+        default=[],
+        metavar="KEY",
+        help="Epic keys to exclude from the table and totals.",
+    )
+    return parser.parse_args()
+
 
 def main() -> int:
-    args = parse_args()
+    args = _parse_args()
 
-    config = resolve_config(args)
+    config = build_config(args)
+
     client = JiraClient(config)
 
     if args.check:
@@ -40,7 +76,7 @@ def main() -> int:
         print(f"Ignoring epics: {', '.join(sorted(ignore))}", file=sys.stderr)
 
     rows = build_progress(epics, client)
-    
+
     print("", file=sys.stderr)
     print(render_markdown_table(rows))
     return 0
@@ -48,3 +84,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+
