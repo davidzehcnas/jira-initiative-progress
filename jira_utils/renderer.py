@@ -123,10 +123,13 @@ def render_markdown_table(rows: List[EpicProgress]) -> str:
         return " " * (col_widths[col] - display_width(text)) + text
 
     def pad_data(text: str, col: int) -> str:
-        return pad_left(text, col) if col == 0 else pad_right(text, col)
+        return pad_left(text, col) if col in {0, 1} else pad_right(text, col)
 
     def sep(col: int) -> str:
-        return ":" + "-" * max(1, col_widths[col] - 2) + ":"
+        width = max(1, col_widths[col])
+        if col in {0, 1}:
+            return ":" + "-" * max(1, width - 1)
+        return "-" * max(1, width - 1) + ":"
 
     lines = [
         "| " + " | ".join(pad_center(h, i) for i, h in enumerate(headers)) + " |",
