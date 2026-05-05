@@ -14,7 +14,7 @@ from jira_utils.progress import (
 
 _WIDE_CATEGORIES = frozenset({"W", "F"})
 
-_BLOCKS = 10
+_BLOCKS = 20
 
 _COLUMNS = [
     "Epic",
@@ -36,10 +36,32 @@ def format_metric(count: int, total: int) -> str:
     return f"{percent(count, total):.1f}% ({count})"
 
 
-def build_progress_bar(done_count: int, total: int) -> str:
-    done_percent = percent(done_count, total)
-    filled = min(_BLOCKS, math.floor((done_percent / 100.0) * _BLOCKS + 0.5))
-    return ("🟩" * filled) + ("⬜" * (_BLOCKS - filled))
+def build_progress_bar(counts: Dict[str, int], total: int) -> str:
+    if total == 0:
+        return "⬜" * _BLOCKS
+
+    done_blocks = math.floor((counts[STATUS_DONE] / total) * _BLOCKS + 0.5)
+    review_blocks = math.floor((counts[STATUS_IN_REVIEW] / total) * _BLOCKS + 0.5)
+    progress_blocks = math.floor((counts[STATUS_IN_PROGRESS] / total) * _BLOCKS + 0.5)
+
+    # Clamp total assigned blocks to _BLOCKS
+    assigned = done_blocks + review_blocks + progress_blocks
+    not_started_blocks = _BLOCKS - min(assigned, _BLOCKS)
+
+    # If rounding caused overflow, trim from the right (not_started first, then progress)
+    if assigned > _BLOCKS:
+        overflow = assigned - _BLOCKS
+        progress_blocks = max(0, progress_blocks - overflow)
+        overflow = assigned - (done_blocks + review_blocks + progress_blocks + not_started_blocks)
+        if overflow > 0:
+            review_blocks = max(0, review_blocks - overflow)
+
+    return (
+        "🟩" * done_blocks
+        + "🟪" * review_blocks
+        + "🟧" * progress_blocks
+        + "⬜" * not_started_blocks
+    )
 
 
 def escape_markdown(text: str) -> str:
@@ -61,7 +83,7 @@ def _build_data_row(summary: str, counts: Dict[str, int]) -> List[str]:
         epic_label = "* " + epic_label
     return [
         epic_label,
-        build_progress_bar(done, total),
+        build_progress_bar(counts, total),
         format_metric(counts[STATUS_NOT_STARTED], total),
         format_metric(counts[STATUS_IN_PROGRESS], total),
         format_metric(counts[STATUS_IN_REVIEW], total),
