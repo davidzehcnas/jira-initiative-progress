@@ -3,9 +3,6 @@ import os
 from dataclasses import dataclass
 
 
-DEFAULT_TIMEOUT = 30
-
-
 @dataclass(frozen=True)
 class JiraConfig:
     email: str
