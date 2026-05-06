@@ -17,6 +17,7 @@ _BLOCKS = 20
 _COLUMNS = [
     "Epic",
     "Progress",
+    "Champion",
     "⬜ Not started",
     "🟧 In progress",
     "🟪 In review",
@@ -73,7 +74,7 @@ def display_width(text: str) -> int:
     )
 
 
-def _build_data_row(summary: str, counts: Dict[str, int]) -> List[str]:
+def _build_data_row(summary: str, counts: Dict[str, int], champion: str = "") -> List[str]:
     total = sum(counts.values())
     done = counts[STATUS_DONE]
     epic_label = escape_markdown(summary)
@@ -82,6 +83,7 @@ def _build_data_row(summary: str, counts: Dict[str, int]) -> List[str]:
     return [
         epic_label,
         build_progress_bar(counts, total),
+        escape_markdown(champion),
         format_metric(counts[STATUS_NOT_STARTED], total),
         format_metric(counts[STATUS_IN_PROGRESS], total),
         format_metric(counts[STATUS_IN_REVIEW], total),
@@ -93,7 +95,7 @@ def render_markdown_table(rows: List[EpicProgress]) -> str:
     headers = _COLUMNS
 
     data_rows: List[List[str]] = [
-        _build_data_row(row.summary, row.counts)
+        _build_data_row(row.summary, row.counts, row.champion or "")
         for row in rows
     ]
 
@@ -101,7 +103,7 @@ def render_markdown_table(rows: List[EpicProgress]) -> str:
     for row in rows:
         for key, value in row.counts.items():
             totals[key] = totals.get(key, 0) + value
-    data_rows.append(_build_data_row("Total", totals))
+    data_rows.append(_build_data_row("Total", totals, ""))
 
     col_widths = [display_width(h) for h in headers]
     for data_row in data_rows:
@@ -121,11 +123,11 @@ def render_markdown_table(rows: List[EpicProgress]) -> str:
         return " " * (col_widths[col] - display_width(text)) + text
 
     def pad_data(text: str, col: int) -> str:
-        return pad_left(text, col) if col in {0, 1} else pad_right(text, col)
+        return pad_left(text, col) if col in {0, 1, 2} else pad_right(text, col)
 
     def sep(col: int) -> str:
         width = max(1, col_widths[col])
-        if col in {0, 1}:
+        if col in {0, 1, 2}:
             return ":" + "-" * max(1, width - 1)
         return "-" * max(1, width - 1) + ":"
 

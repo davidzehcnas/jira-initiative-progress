@@ -17,6 +17,7 @@ STATUSES = (STATUS_NOT_STARTED, STATUS_IN_PROGRESS, STATUS_IN_REVIEW, STATUS_DON
 class EpicProgress:
     summary: str
     counts: Dict[str, int]
+    champion: Optional[str] = None
 
     @property
     def total(self) -> int:
@@ -25,7 +26,7 @@ class EpicProgress:
 
 def fetch_epics(client: JiraClient, initiative_key: str) -> List[dict]:
     jql = f'parent = "{initiative_key}" ORDER BY Rank ASC'
-    return client.search(jql, fields=["summary", "status"])
+    return client.search(jql, fields=["summary", "status", "assignee"])
 
 
 def fetch_epic_children(client: JiraClient, epic_key: str) -> List[dict]:
@@ -66,10 +67,13 @@ def build_progress(epics: List[dict], client: JiraClient) -> List[EpicProgress]:
         summary = epic["fields"]["summary"]
         print(f"  [{i}/{n}] Fetching children for {key}: {summary}", file=sys.stderr)
 
+        assignee = epic["fields"].get("assignee") or {}
+        champion = assignee.get("displayName") or None
+
         children = fetch_epic_children(client, key)
         children = [c for c in children if c["key"] != key]
         classified = Counter(classify_issue(child) for child in children)
         counts = {s: classified.get(s, 0) for s in STATUSES}
 
-        rows.append(EpicProgress(summary=summary, counts=counts))
+        rows.append(EpicProgress(summary=summary, counts=counts, champion=champion))
     return rows
