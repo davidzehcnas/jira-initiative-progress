@@ -5,7 +5,7 @@ import sys
 
 from jira_utils.client import JiraClient
 from jira_utils.config import build_config
-from jira_utils.progress import build_progress, fetch_epics
+from jira_utils.progress import build_epics_progress, fetch_epics
 from jira_utils.renderer import render_markdown_table
 
 DEFAULT_TIMEOUT = 30
@@ -47,9 +47,7 @@ def _parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = _parse_args()
-
     config = build_config(args)
-
     client = JiraClient(config)
 
     if args.check:
@@ -66,24 +64,22 @@ def main() -> int:
     if not args.initiative_key:
         raise SystemExit("initiative_key is required unless --check is used.")
 
-    print(f"Fetching epics for {args.initiative_key}...", file=sys.stderr)
+    print(f"Fetching epics under {args.initiative_key}...", file=sys.stderr)
     epics = fetch_epics(client, args.initiative_key)
-    print(f"Found {len(epics)} epic(s). Fetching children...", file=sys.stderr)
+    print(f"Found {len(epics)} epic(s), now fetching child issues for each...", file=sys.stderr)
 
     if args.ignore_epics:
         ignore = {k.upper() for k in args.ignore_epics}
         epics = [e for e in epics if e["key"].upper() not in ignore]
-        print(f"Ignoring epics: {', '.join(sorted(ignore))}", file=sys.stderr)
+        print(f"Skipping {len(ignore)} epic(s): {', '.join(sorted(ignore))}", file=sys.stderr)
 
-    rows = build_progress(epics, client)
+    epics_progress = build_epics_progress(epics, client)
+    print(render_markdown_table(epics_progress))
 
-    print("", file=sys.stderr)
-    print(render_markdown_table(rows))
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
-
 
 

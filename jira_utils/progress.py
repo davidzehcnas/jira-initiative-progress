@@ -59,7 +59,7 @@ def classify_issue(issue: dict) -> str:
     return STATUS_IN_PROGRESS
 
 
-def build_progress(epics: List[dict], client: JiraClient) -> List[EpicProgress]:
+def build_epics_progress(epics: List[dict], client: JiraClient) -> List[EpicProgress]:
     rows: List[EpicProgress] = []
     n = len(epics)
     for i, epic in enumerate(epics, 1):
