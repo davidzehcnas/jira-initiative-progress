@@ -70,8 +70,7 @@ def build_epics_progress(epics: List[dict], client: JiraClient) -> List[EpicProg
         assignee = epic["fields"].get("assignee") or {}
         champion = assignee.get("displayName") or None
 
-        children = fetch_epic_children(client, key)
-        children = [c for c in children if c["key"] != key]
+        children = [c for c in fetch_epic_children(client, key) if c["key"] != key]
         classified = Counter(classify_issue(child) for child in children)
         counts = {s: classified.get(s, 0) for s in STATUSES}
 
