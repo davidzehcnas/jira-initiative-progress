@@ -38,7 +38,7 @@ def fetch_epic_children(client: JiraClient, epic_key: str) -> List[dict]:
     last_error: Optional[Exception] = None
     for jql in candidate_queries:
         try:
-            return client.search(jql, fields=["summary", "status"])
+            return client.search(jql, fields=["summary", "status", "issuetype"])
         except RuntimeError as exc:
             last_error = exc
 
@@ -70,7 +70,12 @@ def build_epics_progress(epics: List[dict], client: JiraClient) -> List[EpicProg
         assignee = epic["fields"].get("assignee") or {}
         champion = assignee.get("displayName") or None
 
-        children = [c for c in fetch_epic_children(client, key) if c["key"] != key]
+        children = [
+            c
+            for c in fetch_epic_children(client, key)
+            if c["key"] != key
+            and not c["fields"].get("issuetype", {}).get("subtask", False)
+        ]
         classified = Counter(classify_issue(child) for child in children)
         counts = {s: classified.get(s, 0) for s in STATUSES}
 
