@@ -91,7 +91,7 @@ def _build_data_row(summary: str, counts: Dict[str, int], champion: str = "") ->
     ]
 
 
-def render_markdown_table(rows: List[EpicProgress]) -> str:
+def render_markdown_table(rows: List[EpicProgress], add_total: bool = False) -> str:
     headers = _COLUMNS
 
     data_rows: List[List[str]] = [
@@ -99,11 +99,12 @@ def render_markdown_table(rows: List[EpicProgress]) -> str:
         for row in rows
     ]
 
-    totals: Dict[str, int] = {}
-    for row in rows:
-        for key, value in row.counts.items():
-            totals[key] = totals.get(key, 0) + value
-    data_rows.append(_build_data_row("Total", totals, ""))
+    if add_total:
+        totals: Dict[str, int] = {}
+        for row in rows:
+            for key, value in row.counts.items():
+                totals[key] = totals.get(key, 0) + value
+        data_rows.append(_build_data_row("Total", totals, ""))
 
     col_widths = [display_width(h) for h in headers]
     for data_row in data_rows:

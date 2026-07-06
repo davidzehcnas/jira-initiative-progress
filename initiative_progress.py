@@ -42,6 +42,12 @@ def _parse_args() -> argparse.Namespace:
         metavar="KEY",
         help="Epic keys to exclude from the table and totals.",
     )
+    parser.add_argument(
+        "--add-total",
+        action="store_true",
+        default=False,
+        help="Append a Total row at the bottom of the table.",
+    )
     return parser.parse_args()
 
 
@@ -74,7 +80,7 @@ def main() -> int:
         print(f"Skipping {len(ignore)} epic(s): {', '.join(sorted(ignore))}", file=sys.stderr)
 
     epics_progress = build_epics_progress(epics, client)
-    print(render_markdown_table(epics_progress))
+    print(render_markdown_table(epics_progress, add_total=args.add_total))
 
     return 0
 
