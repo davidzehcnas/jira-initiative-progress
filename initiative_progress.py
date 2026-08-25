@@ -16,14 +16,15 @@ def _parse_args() -> argparse.Namespace:
         description="Build the initiative progress markdown table from Jira.",
     )
     parser.add_argument(
-        "site",
-        help="Jira site hostname.",
+        "--site",
+        help="Jira site hostname. Defaults to JIRA_SITE.",
     )
     parser.add_argument(
-        "initiative_key",
-        nargs="?",
+        "--initiative-key",
         help="Initiative issue key, for example PROJ-123. Not required when using --check.",
     )
+    parser.add_argument("site_positional", nargs="?", help=argparse.SUPPRESS)
+    parser.add_argument("initiative_key_positional", nargs="?", help=argparse.SUPPRESS)
     parser.add_argument(
         "--check",
         action="store_true",
@@ -53,6 +54,10 @@ def _parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = _parse_args()
+    if args.site is None:
+        args.site = args.site_positional
+    if args.initiative_key is None:
+        args.initiative_key = args.initiative_key_positional
     config = build_config(args)
     client = JiraClient(config)
 
@@ -68,7 +73,7 @@ def main() -> int:
         return 0
 
     if not args.initiative_key:
-        raise SystemExit("initiative_key is required unless --check is used.")
+        raise SystemExit("--initiative-key is required unless --check is used.")
 
     print(f"Fetching epics under {args.initiative_key}...", file=sys.stderr)
     epics = fetch_epics(client, args.initiative_key)
@@ -87,5 +92,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
-

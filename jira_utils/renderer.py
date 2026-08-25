@@ -12,7 +12,7 @@ from jira_utils.progress import (
 
 _WIDE_CATEGORIES = frozenset({"W", "F"})
 
-_BLOCKS = 20
+_BLOCKS = 10
 
 _COLUMNS = [
     "Epic",

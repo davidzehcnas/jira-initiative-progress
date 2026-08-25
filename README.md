@@ -4,15 +4,30 @@ A command-line tool that fetches a Jira initiative and generates a markdown prog
 
 ## Usage
 
-Set your credentials and pass the initiative key:
+Set your credentials:
 
 ```bash
 export JIRA_EMAIL="your.name@company.com"
 export JIRA_API_TOKEN="your-token-here"
-python3 initiative_progress.py PROJ-123
 ```
 
-The initiative key is the Jira issue key of the top-level initiative (e.g. `PROJ-123`). The script fetches all epics under it, counts the child tasks per status, and prints a markdown progress table to stdout.
+Generate a report using one of these supported invocation forms:
+
+```bash
+# Jira site and initiative key as positional arguments
+python3 initiative_progress.py your-org.atlassian.net PROJ-123
+
+# Jira site as a positional argument and initiative key as an option
+python3 initiative_progress.py your-org.atlassian.net --initiative-key PROJ-123
+
+# Jira site from JIRA_SITE and initiative key as an option
+JIRA_SITE=your-org.atlassian.net python3 initiative_progress.py --initiative-key PROJ-123
+
+# Jira site and initiative key as options
+python3 initiative_progress.py --site your-org.atlassian.net --initiative-key PROJ-123
+```
+
+The initiative key is the Jira issue key of the top-level initiative (e.g. `PROJ-123`). The script fetches all epics under it, counts the child tasks per status, and prints a markdown progress table to stdout. For the Jira site, precedence is `--site`, positional site, then `JIRA_SITE`.
 
 ## Requirements
 
@@ -24,14 +39,15 @@ The initiative key is the Jira issue key of the top-level initiative (e.g. `PROJ
 
 This script authenticates exclusively with a **personal Atlassian API token**. Even if you log in to Jira with your Google work account, scripts cannot reuse that browser session — they need an API token.
 
-Credentials are provided **only** via environment variables:
+Credentials are provided **only** via environment variables. The Jira site can be supplied as the first positional argument, set with `JIRA_SITE`, or overridden with `--site`:
 
 | Variable         | Description                          |
 | ---------------- | ------------------------------------ |
 | `JIRA_EMAIL`     | Your Atlassian account email address |
 | `JIRA_API_TOKEN` | Your personal Atlassian API token    |
+| `JIRA_SITE`      | Your Jira Cloud hostname             |
 
-There are no command-line flags for these values — environment variables are the only mechanism, keeping secrets out of shell history and process listings.
+There are no command-line flags for credentials, keeping secrets out of shell history and process listings.
 
 ### Create your token
 
@@ -46,6 +62,7 @@ Before running a real query you can confirm that the credentials and site are co
 ```bash
 export JIRA_EMAIL="your.name@company.com"
 export JIRA_API_TOKEN="your-token-here"
+export JIRA_SITE="your-org.atlassian.net"
 python3 initiative_progress.py --check
 ```
 
@@ -64,18 +81,18 @@ If the token is wrong or revoked the script exits with a non-zero code and print
 
 The script prints markdown that renders like this:
 
-| Epic | Progress | Champion | ⬜ | 🟧 | 🟪 | 🟩 |
-| :--- | :------- | :------- | --: | --: | --: | --: |
-| * User onboarding redesign | 🟩🟩🟩🟩🟩🟩🟩🟩 | Alice Johnson | 0.0% (0) | 0.0% (0) | 0.0% (0) | 100.0% (14) |
-| API rate limiting | 🟩🟩🟩🟩🟪🟧🟧⬜ | Bob Smith | 10.0% (1) | 20.0% (2) | 10.0% (1) | 60.0% (6) |
-| Mobile push notifications | 🟩🟩🟩🟩🟪🟧🟧⬜ | Carol White | 40.0% (4) | 20.0% (2) | 10.0% (1) | 30.0% (3) |
-| Data export pipeline | 🟧🟧🟧🟧⬜⬜⬜⬜ | | 62.5% (5) | 37.5% (3) | 0.0% (0) | 0.0% (0) |
-| Search indexing v2 | 🟩🟩🟩🟩🟩🟩🟪🟧 | David Lee | 0.0% (0) | 10.0% (1) | 10.0% (1) | 80.0% (8) |
-| Total | 🟩🟩🟩🟩🟪🟧⬜⬜ | | 19.2% (10) | 15.4% (8) | 5.8% (3) | 59.6% (31) |
+| Epic | Progress | Champion | ⬜ Not started | 🟧 In progress | 🟪 In review | 🟩 Done |
+| :--- | :------- | :------- | -------------: | -------------: | -----------: | ------: |
+| * User onboarding redesign | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Alice Johnson | 0.0% (0) | 0.0% (0) | 0.0% (0) | 100.0% (14) |
+| API rate limiting | 🟩🟩🟩🟩🟩🟩🟪🟧🟧⬜ | Bob Smith | 10.0% (1) | 20.0% (2) | 10.0% (1) | 60.0% (6) |
+| Mobile push notifications | 🟩🟩🟩🟪🟧🟧⬜⬜⬜⬜ | Carol White | 40.0% (4) | 20.0% (2) | 10.0% (1) | 30.0% (3) |
+| Data export pipeline | 🟧🟧🟧🟧⬜⬜⬜⬜⬜⬜ | | 62.5% (5) | 37.5% (3) | 0.0% (0) | 0.0% (0) |
+| Search indexing v2 | 🟩🟩🟩🟩🟩🟩🟩🟩🟪🟧 | David Lee | 0.0% (0) | 10.0% (1) | 10.0% (1) | 80.0% (8) |
+| Total | 🟩🟩🟩🟩🟩🟩🟪🟧⬜⬜ | | 19.2% (10) | 15.4% (8) | 5.8% (3) | 59.6% (31) |
 ## Notes
 
 - Epic order is preserved from the initiative order in Jira.
-- The progress bar shows all statuses proportionally: 🟩 done, 🟪 in review, 🟧 in progress, ⬜ not started (left to right).
+- The ten-cell progress bar shows all statuses proportionally: 🟩 done, 🟪 in review, 🟧 in progress, ⬜ not started (left to right).
 - Epics that are 100% done are marked with a `*` prefix in the Epic column.
 - The **Champion** column shows the Jira assignee's display name for each epic. Unassigned epics show an empty cell.
 
@@ -86,6 +103,16 @@ The script prints markdown that renders like this:
 Tests whether the credentials and site are reachable without running any real query. Use this the first time you set up the script, or whenever you rotate your API token.
 
 ```bash
+# Jira site as a positional argument
+python3 initiative_progress.py your-org.atlassian.net --check
+
+# Jira site from JIRA_SITE
+JIRA_SITE=your-org.atlassian.net python3 initiative_progress.py --check
+
+# Jira site as an option
+python3 initiative_progress.py --site your-org.atlassian.net --check
+
+# With JIRA_SITE already exported
 python3 initiative_progress.py --check
 ```
 
@@ -95,13 +122,23 @@ No initiative key is needed. The script exits with code 0 on success and prints 
 
 ### `--site`
 
-The Jira Cloud hostname to connect to. Defaults to `your-org.atlassian.net`, which is correct for most uses. Only set this if you need to point the script at a different Atlassian organisation.
+The Jira Cloud hostname to connect to. Set it once with `JIRA_SITE`, or use this option to override it for a single command.
 
 ```bash
-python3 initiative_progress.py PROJ-123 --site other-org.atlassian.net
+python3 initiative_progress.py --initiative-key PROJ-123 --site other-org.atlassian.net
 ```
 
-Can also be set via the `JIRA_SITE` environment variable.
+Can also be set via the first positional argument or the `JIRA_SITE` environment variable. When multiple forms are present, `--site` takes precedence over the positional site, which takes precedence over `JIRA_SITE`.
+
+---
+
+### `--initiative-key`
+
+The Jira issue key of the top-level initiative. It is an alternative to providing the initiative key as the second positional argument.
+
+```bash
+python3 initiative_progress.py --site your-org.atlassian.net --initiative-key PROJ-123
+```
 
 ---
 
@@ -110,7 +147,7 @@ Can also be set via the `JIRA_SITE` environment variable.
 Excludes one or more epics from the table and from all totals. Pass the Jira issue keys of the epics you want to skip, space-separated. Useful for epics that are on hold, out of scope, or belong to a different team but still appear under the initiative in Jira.
 
 ```bash
-python3 initiative_progress.py PROJ-123 --ignore-epics PROJ-456 PROJ-789
+python3 initiative_progress.py --initiative-key PROJ-123 --ignore-epics PROJ-456 PROJ-789
 ```
 
 The keys are case-insensitive. The script prints a confirmation line to stderr listing which epics were ignored before fetching their children, so no unnecessary API calls are made for them.
@@ -122,5 +159,5 @@ The keys are case-insensitive. The script prints a confirmation line to stderr l
 How many seconds to wait for a response from the Jira API before giving up. Defaults to `30`. Raise it if you are on a slow connection or querying a very large initiative.
 
 ```bash
-python3 initiative_progress.py PROJ-123 --timeout 60
+python3 initiative_progress.py --initiative-key PROJ-123 --timeout 60
 ```
