@@ -16,15 +16,15 @@ def _parse_args() -> argparse.Namespace:
         description="Build the initiative progress markdown table from Jira.",
     )
     parser.add_argument(
-        "--site",
-        help="Jira site hostname. Defaults to JIRA_SITE.",
-    )
-    parser.add_argument(
         "--initiative-key",
         help="Initiative issue key, for example PROJ-123. Not required when using --check.",
     )
-    parser.add_argument("site_positional", nargs="?", help=argparse.SUPPRESS)
-    parser.add_argument("initiative_key_positional", nargs="?", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "initiative_key_positional",
+        nargs="?",
+        metavar="INITIATIVE_KEY",
+        help="Initiative issue key. Alternative to --initiative-key.",
+    )
     parser.add_argument(
         "--check",
         action="store_true",
@@ -54,8 +54,6 @@ def _parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = _parse_args()
-    if args.site is None:
-        args.site = args.site_positional
     if args.initiative_key is None:
         args.initiative_key = args.initiative_key_positional
     config = build_config(args)

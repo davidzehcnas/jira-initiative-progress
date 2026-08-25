@@ -9,25 +9,20 @@ Set your credentials:
 ```bash
 export JIRA_EMAIL="your.name@company.com"
 export JIRA_API_TOKEN="your-token-here"
+export JIRA_SITE="your-org.atlassian.net"
 ```
 
-Generate a report using one of these supported invocation forms:
+Generate a report by passing the initiative key:
 
 ```bash
-# Jira site and initiative key as positional arguments
-python3 initiative_progress.py your-org.atlassian.net PROJ-123
+# Initiative key as the sole positional argument
+python3 initiative_progress.py PROJ-123
 
-# Jira site as a positional argument and initiative key as an option
-python3 initiative_progress.py your-org.atlassian.net --initiative-key PROJ-123
-
-# Jira site from JIRA_SITE and initiative key as an option
-JIRA_SITE=your-org.atlassian.net python3 initiative_progress.py --initiative-key PROJ-123
-
-# Jira site and initiative key as options
-python3 initiative_progress.py --site your-org.atlassian.net --initiative-key PROJ-123
+# Equivalent named form
+python3 initiative_progress.py --initiative-key PROJ-123
 ```
 
-The initiative key is the Jira issue key of the top-level initiative (e.g. `PROJ-123`). The script fetches all epics under it, counts the child tasks per status, and prints a markdown progress table to stdout. For the Jira site, precedence is `--site`, positional site, then `JIRA_SITE`.
+The initiative key is the Jira issue key of the top-level initiative (e.g. `PROJ-123`). The script fetches all epics under it, counts the child tasks per status, and prints a markdown progress table to stdout.
 
 ## Requirements
 
@@ -39,7 +34,7 @@ The initiative key is the Jira issue key of the top-level initiative (e.g. `PROJ
 
 This script authenticates exclusively with a **personal Atlassian API token**. Even if you log in to Jira with your Google work account, scripts cannot reuse that browser session — they need an API token.
 
-Credentials are provided **only** via environment variables. The Jira site can be supplied as the first positional argument, set with `JIRA_SITE`, or overridden with `--site`:
+Credentials and the Jira site are provided only via environment variables:
 
 | Variable         | Description                          |
 | ---------------- | ------------------------------------ |
@@ -103,16 +98,6 @@ The script prints markdown like this. This compact example uses five-cell progre
 Tests whether the credentials and site are reachable without running any real query. Use this the first time you set up the script, or whenever you rotate your API token.
 
 ```bash
-# Jira site as a positional argument
-python3 initiative_progress.py your-org.atlassian.net --check
-
-# Jira site from JIRA_SITE
-JIRA_SITE=your-org.atlassian.net python3 initiative_progress.py --check
-
-# Jira site as an option
-python3 initiative_progress.py --site your-org.atlassian.net --check
-
-# With JIRA_SITE already exported
 python3 initiative_progress.py --check
 ```
 
@@ -120,24 +105,12 @@ No initiative key is needed. The script exits with code 0 on success and prints 
 
 ---
 
-### `--site`
-
-The Jira Cloud hostname to connect to. Set it once with `JIRA_SITE`, or use this option to override it for a single command.
-
-```bash
-python3 initiative_progress.py --initiative-key PROJ-123 --site other-org.atlassian.net
-```
-
-Can also be set via the first positional argument or the `JIRA_SITE` environment variable. When multiple forms are present, `--site` takes precedence over the positional site, which takes precedence over `JIRA_SITE`.
-
----
-
 ### `--initiative-key`
 
-The Jira issue key of the top-level initiative. It is an alternative to providing the initiative key as the second positional argument.
+The Jira issue key of the top-level initiative. It is optional when passed directly as the sole positional argument.
 
 ```bash
-python3 initiative_progress.py --site your-org.atlassian.net --initiative-key PROJ-123
+python3 initiative_progress.py --initiative-key PROJ-123
 ```
 
 ---

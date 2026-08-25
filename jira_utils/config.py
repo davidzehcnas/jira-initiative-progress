@@ -26,9 +26,9 @@ def build_config(args: argparse.Namespace) -> JiraConfig:
             "Use your Atlassian account email as the username, even when logging in via Google SSO."
         )
 
-    site = args.site or os.environ.get("JIRA_SITE")
+    site = os.environ.get("JIRA_SITE")
     if not site:
-        raise SystemExit("Missing Jira site. Set JIRA_SITE or pass --site.")
+        raise SystemExit("Missing Jira site. Set the JIRA_SITE environment variable.")
 
     return JiraConfig(
         email=email,
