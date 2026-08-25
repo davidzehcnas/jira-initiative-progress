@@ -1,0 +1,31 @@
+README.md
+  s_441841f0321556::t_b70ce0c362cf90 65,128,150,162
+  s_441841f0321556::t_33a5610090773e 86-91,95
+  s_441841f0321556::t_78cda932c0b8a0 7,14-17,19-30,84-85,106-115,131
+  s_441841f0321556::t_df23dbe45475ef 48
+  s_441841f0321556::t_d417023921bb23 50,125
+  s_441841f0321556::t_2ca5baf7014fe9 18,42,132-141
+jira_utils/config.py
+  s_441841f0321556::t_b70ce0c362cf90 29-32,36
+jira_utils/renderer.py
+  s_441841f0321556::t_33a5610090773e 15
+initiative_progress.py
+  s_441841f0321556::t_b70ce0c362cf90 19-20,23,76
+  s_441841f0321556::t_dff312d284d35b 26-27,57-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "6131bf14363c1cc3eb8dfb18ea80bb60c3d2c5e6",
+  "prompts": {},
+  "sessions": {
+    "s_441841f0321556": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc8277193ffedMU5CUbG3oz28O",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Sànchez Mendoza <david.sanchez@glovoapp.com>"
+    }
+  }
+}
