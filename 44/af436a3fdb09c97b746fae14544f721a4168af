@@ -1,0 +1,19 @@
+README.md
+  s_441841f0321556::t_c9b543af092aac 82,86-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "44af436a3fdb09c97b746fae14544f721a4168af",
+  "prompts": {},
+  "sessions": {
+    "s_441841f0321556": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc8277193ffedMU5CUbG3oz28O",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Sànchez Mendoza <david.sanchez@glovoapp.com>"
+    }
+  }
+}
