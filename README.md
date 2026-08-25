@@ -79,16 +79,16 @@ If the token is wrong or revoked the script exits with a non-zero code and print
 
 ## Output
 
-The script prints markdown that renders like this:
+The script prints markdown like this. This compact example uses five-cell progress bars to keep the table on one line; the actual output uses ten cells.
 
 | Epic | Progress | Champion | ⬜ Not started | 🟧 In progress | 🟪 In review | 🟩 Done |
 | :--- | :------- | :------- | -------------: | -------------: | -----------: | ------: |
-| * User onboarding redesign | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Alice Johnson | 0.0% (0) | 0.0% (0) | 0.0% (0) | 100.0% (14) |
-| API rate limiting | 🟩🟩🟩🟩🟩🟩🟪🟧🟧⬜ | Bob Smith | 10.0% (1) | 20.0% (2) | 10.0% (1) | 60.0% (6) |
-| Mobile push notifications | 🟩🟩🟩🟪🟧🟧⬜⬜⬜⬜ | Carol White | 40.0% (4) | 20.0% (2) | 10.0% (1) | 30.0% (3) |
-| Data export pipeline | 🟧🟧🟧🟧⬜⬜⬜⬜⬜⬜ | | 62.5% (5) | 37.5% (3) | 0.0% (0) | 0.0% (0) |
-| Search indexing v2 | 🟩🟩🟩🟩🟩🟩🟩🟩🟪🟧 | David Lee | 0.0% (0) | 10.0% (1) | 10.0% (1) | 80.0% (8) |
-| Total | 🟩🟩🟩🟩🟩🟩🟪🟧⬜⬜ | | 19.2% (10) | 15.4% (8) | 5.8% (3) | 59.6% (31) |
+| * User onboarding redesign | 🟩🟩🟩🟩🟩 | Alice Johnson | 0.0% (0) | 0.0% (0) | 0.0% (0) | 100.0% (14) |
+| API rate limiting | 🟩🟩🟩🟪🟧 | Bob Smith | 10.0% (1) | 20.0% (2) | 10.0% (1) | 60.0% (6) |
+| Mobile push notifications | 🟩🟩🟪🟧⬜ | Carol White | 40.0% (4) | 20.0% (2) | 10.0% (1) | 30.0% (3) |
+| Data export pipeline | 🟧🟧⬜⬜⬜ | | 62.5% (5) | 37.5% (3) | 0.0% (0) | 0.0% (0) |
+| Search indexing v2 | 🟩🟩🟩🟩🟪 | David Lee | 0.0% (0) | 10.0% (1) | 10.0% (1) | 80.0% (8) |
+| Total | 🟩🟩🟩🟪⬜ | | 19.2% (10) | 15.4% (8) | 5.8% (3) | 59.6% (31) |
 ## Notes
 
 - Epic order is preserved from the initiative order in Jira.
