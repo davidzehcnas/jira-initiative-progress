@@ -1,0 +1,25 @@
+initiative_progress.py
+  s_441841f0321556::t_17101876a87ee1 23-27
+  s_441841f0321556::t_f27fc06d43f811 22
+README.md
+  s_441841f0321556::t_cc8cd08b0d1cc2 12,15,22,25,37,113
+  s_441841f0321556::t_17101876a87ee1 18-19,21,110
+jira_utils/config.py
+  s_441841f0321556::t_86ee49e90a284e 29,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "3f824fb0072931e74be367f6e0ed912b48af740c",
+  "prompts": {},
+  "sessions": {
+    "s_441841f0321556": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc8277193ffedMU5CUbG3oz28O",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Sànchez Mendoza <david.sanchez@glovoapp.com>"
+    }
+  }
+}
